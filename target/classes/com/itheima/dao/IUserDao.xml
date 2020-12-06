@@ -41,6 +41,15 @@
         values(#{userName},#{userAddress},#{userSex},#{userBirthday})
     </insert>
 
+
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="userId">
+        insert into user (username,address,sex,birthday) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userName},#{item.userAddress},#{item.userSex},#{item.userBirthday})
+        </foreach>
+    </insert>
+
     <!-- 更新用户 -->
     <update id="updateUser" parameterType="com.itheima.domain.User">
         update user set username=#{userName},address=#{userAddress},sex=#{userSex},birthday=#{userBirthday} where id=#{userId}

@@ -114,15 +114,18 @@ public class MybatisTest {
     @Test
     public void batchSave() {
         List<User> users = new ArrayList<User>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 3000; i++) {
             User user = new User();
-            user.setUserName("modify User property"+i);
-            user.setUserAddress("北京市顺义区"+i);
+            user.setUserName("modify User property" + i);
+            user.setUserAddress("北京市顺义区" + i);
             user.setUserSex("女");
             user.setUserBirthday(new Date());
             users.add(user);
         }
-           userDao.batchInsert(users);
+        long startTime = System.currentTimeMillis();   //获取开始时间
+        userDao.batchInsert(users);
+        long endTime = System.currentTimeMillis(); //获取结束时间
+        System.out.println("程序运行时间： " + (endTime - startTime) + "ms");
 
     }
 
