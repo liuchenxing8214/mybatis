@@ -29,8 +29,16 @@ public interface IUserDao {
      */
     int saveUser(User user);
 
-
-    public int batchInsert(List<User> users);
+    /**
+     * @title  批量保存
+     * @description
+     * @author lc
+ * @param: users
+     * @updateTime 2020/12/6 12:21
+ * @return: int
+     * @throws
+     */
+    int batchInsert(List<User> users);
 
     /**
      * 更新用户
