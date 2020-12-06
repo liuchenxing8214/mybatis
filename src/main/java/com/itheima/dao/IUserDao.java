@@ -29,6 +29,9 @@ public interface IUserDao {
      */
     int saveUser(User user);
 
+
+    public int batchInsert(List<User> users);
+
     /**
      * 更新用户
      * @param user

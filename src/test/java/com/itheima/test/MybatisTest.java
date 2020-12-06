@@ -52,6 +52,7 @@ public class MybatisTest {
     private SqlSession sqlSession;
     private IUserDao userDao;
 
+
     @Before//用于在测试方法执行之前执行
     public void init() throws Exception {
         //1.读取配置文件，生成字节输入流
@@ -108,6 +109,21 @@ public class MybatisTest {
         userDao.saveUser(user);
 
         System.out.println("保存操作之后：" + user);
+    }
+
+    @Test
+    public void batchSave() {
+        List<User> users = new ArrayList<User>();
+        for (int i = 0; i < 10000; i++) {
+            User user = new User();
+            user.setUserName("modify User property"+i);
+            user.setUserAddress("北京市顺义区"+i);
+            user.setUserSex("女");
+            user.setUserBirthday(new Date());
+            users.add(user);
+        }
+           userDao.batchInsert(users);
+
     }
 
 
