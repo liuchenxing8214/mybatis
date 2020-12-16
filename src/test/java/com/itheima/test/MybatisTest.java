@@ -129,6 +129,14 @@ public class MybatisTest {
 
     }
 
+@Test
+public void betweenQuery(){
+    List<User> users = userDao.betweenBy(1,100);
+    for(User obj:users){
+        System.out.println(obj);
+    }
+}
+
 
     /**
      * 测试更新操作

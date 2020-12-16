@@ -14,11 +14,6 @@
         <result property="userAddress" column="address"></result>
         <result property="userSex" column="sex"></result>
         <result property="userBirthday" column="birthday"></result>
-        <collection property="accounts" ofType="com.itheima.domain.Account">
-            <id column="aid" property="id"/>
-            <result column="uid" property="uid"/>
-            <result column="money" property="money"/>
-        </collection>
     </resultMap>
     <!-- 查询所有 -->
     <select id="findAll" resultMap="userMap">
@@ -86,10 +81,16 @@
         </where>
     </select>
 
+
     <!-- 抽取重复的语句代码片段 -->
     <sql id="defaultSql">
           select * from user
     </sql>
+
+
+    <select id="betweenBy" resultMap="userMap">
+        <include refid="defaultSql"></include> where id >= #{minId} and id &lt;= #{maxId}
+    </select>
 
 
 </mapper>

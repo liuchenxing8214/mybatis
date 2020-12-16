@@ -2,6 +2,7 @@ package com.itheima.dao;
 
 import com.itheima.domain.QueryVo;
 import com.itheima.domain.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -61,6 +62,9 @@ public interface IUserDao {
      * @return
      */
     List<User> findInIds(QueryVo vo);
+
+
+    List<User> betweenBy(@Param("minId") Integer minId,@Param("maxId") Integer maxId);
 
 
 
