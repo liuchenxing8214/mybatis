@@ -67,6 +67,13 @@ public interface IUserDao {
     List<User> betweenBy(@Param("minId") Integer minId,@Param("maxId") Integer maxId);
 
 
+    Long queryCount();
+
+    List<User> twoFindInIds(List<Integer> ids);
+
+
+
+
 
 }
 

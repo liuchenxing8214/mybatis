@@ -2,6 +2,7 @@ package com.itheima.test;
 
 import com.itheima.dao.IUserDao;
 import com.itheima.domain.QueryVo;
+import com.itheima.domain.Student;
 import com.itheima.domain.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -10,8 +11,13 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +26,9 @@ import java.util.List;
  * mybatis的入门案例
  */
 public class MybatisTest {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /* */
     /**
@@ -116,8 +125,8 @@ public class MybatisTest {
         List<User> users = new ArrayList<User>();
         for (int i = 0; i < 3000; i++) {
             User user = new User();
-            user.setUserName("modify User property" + i);
-            user.setUserAddress("北京市顺义区" + i);
+            user.setUserName("modify User property"+i);
+            user.setUserAddress("北京市顺义区"+i);
             user.setUserSex("女");
             user.setUserBirthday(new Date());
             users.add(user);
@@ -177,10 +186,25 @@ public void betweenQuery(){
         ids.add(42);
         ids.add(43);
         ids.add(46);
-        ids.add(57);
+        ids.add(1);
         vo.setIds(ids);
 //6.执行操作
         List<User> users = userDao.findInIds(vo);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+
+    @Test
+    public void twoFindIds(){
+        List<Integer> ids = new ArrayList<Integer>();
+        ids.add(41);
+        ids.add(42);
+        ids.add(43);
+        ids.add(46);
+        ids.add(1);
+        List<User> users =userDao.twoFindInIds(ids);
         for (User user : users) {
             System.out.println(user);
         }
@@ -195,6 +219,29 @@ public void betweenQuery(){
             System.out.println("-------每个用户的内容---------");
             System.out.println(user);
             System.out.println(user.getAccounts());
+        }
+    }
+    @Test
+    public void queryCount(){
+       Long  a =  userDao.queryCount();
+        System.out.println("a="+a);
+    }
+
+    @Test
+    public void getUserList() {
+        List<Student> studentList = jdbcTemplate.query("select * from student", new RowMapper<Student>() {
+            @Override
+            public Student mapRow(ResultSet resultSet, int i) throws SQLException {
+                Student user = new Student();
+                user.setId(resultSet.getInt("id"));
+                user.setName(resultSet.getString("name"));
+                user.setAge(resultSet.getInt("age"));
+                user.setCreate(resultSet.getInt("create"));
+                return user;
+            }
+        });
+        for(Student stu:studentList){
+            System.out.println(stu.toString());
         }
     }
 }

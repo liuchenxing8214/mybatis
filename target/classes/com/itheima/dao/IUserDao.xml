@@ -10,10 +10,10 @@
         <!-- 主键字段的对应 -->
         <id property="userId" column="id"></id>
         <!--非主键字段的对应-->
-        <result property="userName" column="username"></result>
-        <result property="userAddress" column="address"></result>
-        <result property="userSex" column="sex"></result>
-        <result property="userBirthday" column="birthday"></result>
+        <result property="userName" column="user_name"></result>
+        <result property="userAddress" column="user_address"></result>
+        <result property="userSex" column="user_sex"></result>
+        <result property="userBirthday" column="user_birthday"></result>
     </resultMap>
     <!-- 查询所有 -->
     <select id="findAll" resultMap="userMap">
@@ -37,12 +37,14 @@
     </insert>
 
 
-
-    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="userId">
-        insert into user (username,address,sex,birthday) values
+    <insert id="batchInsert" parameterType="com.itheima.domain.User">
+        insert into user (user_name,user_address,user_sex,user_birthday) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.userName},#{item.userAddress},#{item.userSex},#{item.userBirthday})
         </foreach>
+        ON DUPLICATE KEY UPDATE
+        user_sex=VALUES(user_sex),
+        user_birthday=VALUES(user_birthday)
     </insert>
 
     <!-- 更新用户 -->
@@ -55,13 +57,13 @@
         <include refid="defaultSql"></include>
         <where>
             <if test="userName!=null and userName != '' ">
-                and username like #{userName}
+                and user_name like #{userName}
             </if>
             <if test="userAddress != null and userAddress !='' ">
-                and address like #{userAddress}
+                and user_address like #{userAddress}
             </if>
             <if test="userSex != null and userSex != '' ">
-                and sex = #{userSex}
+                and user_sex = #{userSex}
             </if>
         </where>
     </select>
@@ -84,12 +86,27 @@
 
     <!-- 抽取重复的语句代码片段 -->
     <sql id="defaultSql">
-          select * from user
+          select id,user_name,user_birthday,user_address from user
     </sql>
 
 
     <select id="betweenBy" resultMap="userMap">
-        <include refid="defaultSql"></include> where id >= #{minId} and id &lt;= #{maxId}
+        <include refid="defaultSql"></include>
+        where id >= #{minId} and id &lt;= #{maxId}
+    </select>
+
+
+    <select id="queryCount" resultType="java.lang.Long">
+SELECT COUNT(1) from user where user_name = 'modify User property';
+    </select>
+
+
+    <select id="twoFindInIds" resultMap="userMap">
+        <include refid="defaultSql"></include>
+        where id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
 
