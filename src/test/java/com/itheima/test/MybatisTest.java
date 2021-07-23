@@ -123,7 +123,7 @@ public class MybatisTest {
     @Test
     public void batchSave() {
         List<User> users = new ArrayList<User>();
-        for (int i = 0; i < 3000; i++) {
+        for (int i = 11; i < 2000; i++) {
             User user = new User();
             user.setUserName("modify User property"+i);
             user.setUserAddress("北京市顺义区"+i);
@@ -199,7 +199,7 @@ public void betweenQuery(){
     @Test
     public void twoFindIds(){
         List<Integer> ids = new ArrayList<Integer>();
-        ids.add(41);
+       ids.add(41);
         ids.add(42);
         ids.add(43);
         ids.add(46);
@@ -223,7 +223,7 @@ public void betweenQuery(){
     }
     @Test
     public void queryCount(){
-       Long  a =  userDao.queryCount();
+        int  a =  userDao.queryCount();
         System.out.println("a="+a);
     }
 
@@ -244,5 +244,14 @@ public void betweenQuery(){
             System.out.println(stu.toString());
         }
     }
+
+    @Test
+    public void getDate_test(){
+        List<Date> list = userDao.getDate();
+        System.out.println(list.get(0));
+        System.out.println(list);
+    }
+
+
 }
 

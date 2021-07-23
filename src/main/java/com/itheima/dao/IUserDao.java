@@ -4,6 +4,7 @@ import com.itheima.domain.QueryVo;
 import com.itheima.domain.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,9 +68,12 @@ public interface IUserDao {
     List<User> betweenBy(@Param("minId") Integer minId,@Param("maxId") Integer maxId);
 
 
-    Long queryCount();
+    int queryCount();
 
-    List<User> twoFindInIds(List<Integer> ids);
+    List<User> twoFindInIds(@Param("ids") List<Integer> ids);
+
+
+    List<Date> getDate();
 
 
 

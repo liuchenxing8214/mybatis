@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.itheima.dao.IUserDao">
 
 
@@ -96,18 +94,24 @@
     </select>
 
 
-    <select id="queryCount" resultType="java.lang.Long">
-SELECT COUNT(1) from user where user_name = 'modify User property';
+    <select id="queryCount" resultType="int">
+SELECT COUNT(1) from uer where user_name like '%嘻嘻%'
+
     </select>
 
 
-    <select id="twoFindInIds" resultMap="userMap">
-        <include refid="defaultSql"></include>
-        where id in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+    <select id="twoFindInIds" resultType="com.itheima.domain.User">
+    select id,user_name as userName,user_birthday as userBirthday from user
+    where id in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    order by user_birthday desc
+</select>
+
+    <select id="getDate" resultType="java.util.Date">
+         SELECT  DATE_FORMAT(MAX(user_birthday),'%Y-%m-%d') date
+         from user  GROUP BY DATE_FORMAT(user_birthday,'%Y%m')
+          ORDER BY date DESC LIMIT 12
     </select>
-
-
 </mapper>
