@@ -114,4 +114,12 @@ SELECT COUNT(1) from uer where user_name like '%嘻嘻%'
          from user  GROUP BY DATE_FORMAT(user_birthday,'%Y%m')
           ORDER BY date DESC LIMIT 12
     </select>
+
+    <select id="queryUser" resultType="java.util.Map"
+            statementType="STATEMENT">
+    select
+    ${columns}
+    from user
+     where user_name like ${userName}
+    </select>
 </mapper>

@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * mybatis的入门案例
@@ -125,8 +126,8 @@ public class MybatisTest {
         List<User> users = new ArrayList<User>();
         for (int i = 11; i < 2000; i++) {
             User user = new User();
-            user.setUserName("modify User property"+i);
-            user.setUserAddress("北京市顺义区"+i);
+            user.setUserName("modify User property" + i);
+            user.setUserAddress("北京市顺义区" + i);
             user.setUserSex("女");
             user.setUserBirthday(new Date());
             users.add(user);
@@ -138,13 +139,13 @@ public class MybatisTest {
 
     }
 
-@Test
-public void betweenQuery(){
-    List<User> users = userDao.betweenBy(1,100);
-    for(User obj:users){
-        System.out.println(obj);
+    @Test
+    public void betweenQuery() {
+        List<User> users = userDao.betweenBy(1, 100);
+        for (User obj : users) {
+            System.out.println(obj);
+        }
     }
-}
 
 
     /**
@@ -197,14 +198,14 @@ public void betweenQuery(){
 
 
     @Test
-    public void twoFindIds(){
+    public void twoFindIds() {
         List<Integer> ids = new ArrayList<Integer>();
-       ids.add(41);
+        ids.add(41);
         ids.add(42);
         ids.add(43);
         ids.add(46);
         ids.add(1);
-        List<User> users =userDao.twoFindInIds(ids);
+        List<User> users = userDao.twoFindInIds(ids);
         for (User user : users) {
             System.out.println(user);
         }
@@ -221,10 +222,11 @@ public void betweenQuery(){
             System.out.println(user.getAccounts());
         }
     }
+
     @Test
-    public void queryCount(){
-        int  a =  userDao.queryCount();
-        System.out.println("a="+a);
+    public void queryCount() {
+        int a = userDao.queryCount();
+        System.out.println("a=" + a);
     }
 
     @Test
@@ -240,16 +242,28 @@ public void betweenQuery(){
                 return user;
             }
         });
-        for(Student stu:studentList){
+        for (Student stu : studentList) {
             System.out.println(stu.toString());
         }
     }
 
     @Test
-    public void getDate_test(){
+    public void getDate_test() {
         List<Date> list = userDao.getDate();
         System.out.println(list.get(0));
         System.out.println(list);
+    }
+
+
+    @Test
+    public void queryUser() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("'").append("user_name").append("'").append(",")
+                .append("'").append("user_birthday").append("'");
+        StringBuilder builder1=  new StringBuilder();
+        builder1.append("'%").append("modify User property").append("%'");
+        List<Map<String, String>> result = userDao.queryUser(builder.toString(), builder1.toString());
+        System.out.println(result);
     }
 
 

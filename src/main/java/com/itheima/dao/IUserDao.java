@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -76,8 +77,8 @@ public interface IUserDao {
     List<Date> getDate();
 
 
-
-
+    List<Map<String,String>> queryUser(@Param("columns") String columns,
+                                       @Param("userName") String userName);
 
 }
 
