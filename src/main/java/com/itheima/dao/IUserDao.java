@@ -5,6 +5,7 @@ import com.itheima.domain.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public interface IUserDao {
     List<User> betweenBy(@Param("minId") Integer minId,@Param("maxId") Integer maxId);
 
 
-    int queryCount();
+    Integer queryCount();
 
     List<User> twoFindInIds(@Param("ids") List<Integer> ids);
 
@@ -77,8 +78,8 @@ public interface IUserDao {
     List<Date> getDate();
 
 
-    List<Map<String,String>> queryUser(@Param("columns") String columns,
-                                       @Param("userName") String userName);
+    List<LinkedHashMap<String,String>> queryUser(@Param("columns") String columns,
+                                                 @Param("userName") String userName);
 
 }
 

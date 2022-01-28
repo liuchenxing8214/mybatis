@@ -6,7 +6,7 @@
     <!-- 配置 查询结果的列名和实体类的属性名的对应关系 -->
     <resultMap id="userMap" type="com.itheima.domain.User">
         <!-- 主键字段的对应 -->
-        <id property="userId" column="id"></id>
+        <!--  <id property="userId" column="id"></id>-->
         <!--非主键字段的对应-->
         <result property="userName" column="user_name"></result>
         <result property="userAddress" column="user_address"></result>
@@ -84,7 +84,7 @@
 
     <!-- 抽取重复的语句代码片段 -->
     <sql id="defaultSql">
-          select id,user_name,user_birthday,user_address from user
+          select id,user_name,user_sex,user_birthday,user_address from user
     </sql>
 
 
@@ -95,7 +95,7 @@
 
 
     <select id="queryCount" resultType="int">
-SELECT COUNT(1) from uer where user_name like '%嘻嘻%'
+SELECT COUNT(1) from user where user_name like '%嘻嘻%'
 
     </select>
 
@@ -115,11 +115,10 @@ SELECT COUNT(1) from uer where user_name like '%嘻嘻%'
           ORDER BY date DESC LIMIT 12
     </select>
 
-    <select id="queryUser" resultType="java.util.Map"
-            statementType="STATEMENT">
+    <select id="queryUser" resultType="java.util.LinkedHashMap">
     select
     ${columns}
     from user
-     where user_name like ${userName}
+     where user_name like concat('%',#{userName},'%')
     </select>
 </mapper>

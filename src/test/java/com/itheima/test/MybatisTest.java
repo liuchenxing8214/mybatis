@@ -15,11 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +109,7 @@ public class MybatisTest {
     @Test
     public void testFindOne() {
         User user = userDao.findById(60);
+        System.out.println(user == null);
         System.out.println(user);
     }
 
@@ -122,14 +131,21 @@ public class MybatisTest {
     }
 
     @Test
-    public void batchSave() {
+    public void batchSave() throws ParseException {
+
         List<User> users = new ArrayList<User>();
-        for (int i = 11; i < 2000; i++) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String birthDate = "2022-01-25 11:03:34";
+        for (int i = 0; i < 4000; i++) {
+
             User user = new User();
             user.setUserName("modify User property" + i);
             user.setUserAddress("北京市顺义区" + i);
             user.setUserSex("女");
-            user.setUserBirthday(new Date());
+            Date date = format.parse(birthDate);
+            System.out.println("str"+format.format(date));
+            System.out.println("date================"+date);
+            user.setUserBirthday(date);
             users.add(user);
         }
         long startTime = System.currentTimeMillis();   //获取开始时间
@@ -140,11 +156,108 @@ public class MybatisTest {
     }
 
     @Test
-    public void betweenQuery() {
+    public void betweenQuery() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         List<User> users = userDao.betweenBy(1, 100);
-        for (User obj : users) {
+  /*      for (User obj : users) {
             System.out.println(obj);
+            System.out.println(format.parse("2022-01-25 11:03:34").compareTo(obj.getUserBirthday()));
+        }*/
+        Map<String, User> userMap = new HashMap<>();
+        for (User user : users) {
+            userMap.put(user.getUserName(), user);
         }
+
+        for (int i = 11; i < 50; i++) {
+
+            User user = new User();
+            user.setUserName("modify User property" + i);
+            user.setUserAddress("北京市顺义区" + i);
+            user.setUserSex("女");
+            user.setUserBirthday(format.parse("2022-01-26 11:03:34"));
+            users.add(user);
+            User dbUser = userMap.get("modify User property" + i);
+            Boolean flag = this.compareObject(user, dbUser);
+            if (flag) {
+                System.out.println(user);
+            }
+
+
+        }
+
+
+    }
+
+
+    /**
+     * 比较两个实体属性值，返回一个boolean,true则表时两个对象中的属性值无差异
+     *
+     * @param oldObject 进行属性比较的对象1
+     * @param newObject 进行属性比较的对象2
+     * @return 属性差异比较结果boolean
+     */
+    public boolean compareObject(Object oldObject, Object newObject) {
+        Map<String, Map<String, Object>> resultMap = compareFields(oldObject, newObject);
+
+        if (resultMap.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 比较两个实体属性值，返回一个map以有差异的属性名为key，value为一个Map分别存oldObject,newObject此属性名的值
+     * @param oldObject 进行属性比较的对象1
+     * @param newObject 进行属性比较的对象2
+     * @return 属性差异比较结果map
+     */
+    public Map<String, Map<String, Object>> compareFields(Object oldObject, Object newObject) {
+        Map<String, Map<String, Object>> map = new HashMap<>();
+        try {
+            //只有两个对象都是同一类型的才有可比性
+            if (oldObject.getClass() == newObject.getClass()) {
+                Class clazz = oldObject.getClass();
+                //获取object的所有属性
+                PropertyDescriptor[] pds = Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors();
+                for (PropertyDescriptor pd : pds) {
+                    //遍历获取属性名
+                    String name = pd.getName();
+                    //获取属性的get方法
+                    Method readMethod = pd.getReadMethod();
+                    // 在oldObject上调用get方法等同于获得oldObject的属性值
+                    Object oldValue = readMethod.invoke(oldObject);
+                    // 在newObject上调用get方法等同于获得newObject的属性值
+                    Object newValue = readMethod.invoke(newObject);
+
+                    if (oldValue instanceof Timestamp) {
+                        oldValue = new Date(((Timestamp) oldValue).getTime());
+                    }
+                    if (newValue instanceof Timestamp) {
+                        newValue = new Date(((Timestamp) newValue).getTime());
+                    }
+                    if (oldValue == null && newValue == null) {
+                        continue;
+                    }
+                    if (oldValue == null && newValue != null) {
+                        Map<String, Object> valueMap = new HashMap<String, Object>();
+                        valueMap.put("oldValue", oldValue);
+                        valueMap.put("newValue", newValue);
+                        map.put(name, valueMap);
+                        continue;
+                    }
+                    if (!oldValue.equals(newValue)) {// 比较这两个值是否相等,不等就可以放入map了
+                        Map<String, Object> valueMap = new HashMap<String, Object>();
+                        valueMap.put("oldValue", oldValue);
+                        valueMap.put("newValue", newValue);
+                        map.put(name, valueMap);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
 
@@ -225,7 +338,7 @@ public class MybatisTest {
 
     @Test
     public void queryCount() {
-        int a = userDao.queryCount();
+        Integer a = userDao.queryCount();
         System.out.println("a=" + a);
     }
 
@@ -258,12 +371,17 @@ public class MybatisTest {
     @Test
     public void queryUser() {
         StringBuilder builder = new StringBuilder();
-        builder.append("'").append("user_name").append("'").append(",")
-                .append("'").append("user_birthday").append("'");
-        StringBuilder builder1=  new StringBuilder();
-        builder1.append("'%").append("modify User property").append("%'");
-        List<Map<String, String>> result = userDao.queryUser(builder.toString(), builder1.toString());
-        System.out.println(result);
+        builder.append("user_name").append(",")
+                .append("user_birthday").append(",")
+                .append("user_sex").append(",")
+                .append("user_address");
+        StringBuilder builder1 = new StringBuilder();
+        builder1.append("modify User property");
+        List<LinkedHashMap<String, String>> result = userDao.queryUser(builder.toString(), builder1.toString());
+        result.get(0);
+        for (Map map : result) {
+            System.out.println(map);
+        }
     }
 
 
