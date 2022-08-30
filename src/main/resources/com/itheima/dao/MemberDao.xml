@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTID Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.MemberDao">
+
+    <!-- 配置 查询结果的列名和实体类的属性名的对应关系 -->
+    <resultMap id="memberMap" type="com.itheima.domain.Member">
+        <!-- 主键字段的对应 -->
+        <!--  <id property="userId" column="id"></id>-->
+        <!--非主键字段的对应-->
+        <result property="id" column="id"></result>
+        <result property="companyNo" column="user_address"></result>
+        <result property="memberName" column="user_sex"></result>
+    </resultMap>
+
+</mapper>

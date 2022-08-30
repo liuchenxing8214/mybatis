@@ -1,5 +1,6 @@
 package com.itheima.test;
 
+import com.google.common.collect.ComparisonChain;
 import com.itheima.dao.IUserDao;
 import com.itheima.domain.QueryVo;
 import com.itheima.domain.Student;
@@ -158,7 +159,7 @@ public class MybatisTest {
     @Test
     public void betweenQuery() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        List<User> users = userDao.betweenBy(1, 100);
+        List<User> users = userDao.betweenBy(1, 200);
   /*      for (User obj : users) {
             System.out.println(obj);
             System.out.println(format.parse("2022-01-25 11:03:34").compareTo(obj.getUserBirthday()));
@@ -167,8 +168,8 @@ public class MybatisTest {
         for (User user : users) {
             userMap.put(user.getUserName(), user);
         }
-
-        for (int i = 11; i < 50; i++) {
+        long startTime = System.currentTimeMillis();
+        for (int i = 1; i < 200; i++) {
 
             User user = new User();
             user.setUserName("modify User property" + i);
@@ -182,8 +183,48 @@ public class MybatisTest {
                 System.out.println(user);
             }
 
+        }
+        long during = System.currentTimeMillis() -startTime;
+        System.out.println("对象比较时间为"+during +"ms");
+
+
+    }
+
+    @Test
+    public void guavaBetweenQuery() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        List<User> users = userDao.betweenBy(1, 200);
+  /*      for (User obj : users) {
+            System.out.println(obj);
+            System.out.println(format.parse("2022-01-25 11:03:34").compareTo(obj.getUserBirthday()));
+        }*/
+        Map<String, User> userMap = new HashMap<>();
+        for (User user : users) {
+            userMap.put(user.getUserName(), user);
+        }
+        long startTime = System.currentTimeMillis();
+        for (int i = 1; i < 200; i++) {
+
+            User user = new User();
+            user.setUserName("modify User property" + i);
+            user.setUserAddress("北京市顺义区" + i);
+            user.setUserSex(null);
+            user.setUserBirthday(format.parse("2022-01-26 11:03:34"));
+            users.add(user);
+            User dbUser = userMap.get("modify User property" + i);
+            int comparisonResult = ComparisonChain.start()
+                    .compare(user.getUserName(),dbUser.getUserName())
+                    .compare(user.getUserAddress(),dbUser.getUserAddress())
+                    .compare(user.getUserSex(),dbUser.getUserSex())
+                    .compare(user.getUserBirthday(),dbUser.getUserBirthday())
+                    .result();
+            if (comparisonResult==0) {
+                System.out.println(user);
+            }
 
         }
+        long during = System.currentTimeMillis() -startTime;
+        System.out.println("对象比较时间为"+during +"ms");
 
 
     }
@@ -200,9 +241,9 @@ public class MybatisTest {
         Map<String, Map<String, Object>> resultMap = compareFields(oldObject, newObject);
 
         if (resultMap.size() > 0) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -219,7 +260,10 @@ public class MybatisTest {
             if (oldObject.getClass() == newObject.getClass()) {
                 Class clazz = oldObject.getClass();
                 //获取object的所有属性
+                long start = System.currentTimeMillis();
                 PropertyDescriptor[] pds = Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors();
+                long dur = System.currentTimeMillis()-start;
+                System.out.println("反射时间为："+dur);
                 for (PropertyDescriptor pd : pds) {
                     //遍历获取属性名
                     String name = pd.getName();
@@ -229,13 +273,6 @@ public class MybatisTest {
                     Object oldValue = readMethod.invoke(oldObject);
                     // 在newObject上调用get方法等同于获得newObject的属性值
                     Object newValue = readMethod.invoke(newObject);
-
-                    if (oldValue instanceof Timestamp) {
-                        oldValue = new Date(((Timestamp) oldValue).getTime());
-                    }
-                    if (newValue instanceof Timestamp) {
-                        newValue = new Date(((Timestamp) newValue).getTime());
-                    }
                     if (oldValue == null && newValue == null) {
                         continue;
                     }
@@ -383,6 +420,8 @@ public class MybatisTest {
             System.out.println(map);
         }
     }
+
+
 
 
 }

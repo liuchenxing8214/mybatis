@@ -5,14 +5,24 @@ import freemarker.template.Template;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        testFreemarker();
+
+
+        //testFreemarker();
+        List<String> list =  new ArrayList<>();
+        list.add("aa");
+        list.clear();
+        System.out.println(list.size());
+        list.add("bb");
+        System.out.println(list);
 
     }
 
